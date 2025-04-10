@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"encoding/hex"
+	"flag"
 	"strings"
 
 	"buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go/meshtastic"
@@ -13,7 +14,15 @@ import (
 )
 
 func main() {
-	client := mqtt.NewClient("tcp://mqtt.meshat.se:1883", "msh", "msh", "msh/+")
+	var server, username, password, rootTopic string
+	flag.StringVar(&server, "server", "tcp://mqtt.meshtastic.org:1883", "MQTT server")
+	flag.StringVar(&username, "username", "meshdev", "MQTT username")
+	flag.StringVar(&password, "password", "large4cats", "MQTT password")
+	flag.StringVar(&rootTopic, "topic", "msh/EU_868", "MQTT topic root")
+
+	flag.Parse()
+
+	client := mqtt.NewClient(server, username, password, rootTopic)
 	err := client.Connect()
 	if err != nil {
 		log.Fatal(err)
