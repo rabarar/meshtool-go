@@ -8,10 +8,10 @@ import (
 	"fmt"
 )
 
-// CreateNonce creates a 128-bit nonce.
+// createNonce creates a 128-bit nonce.
 // It takes a uint32 packetId, converts it to a uint64, and a uint32 fromNode.
 // The nonce is concatenated as [64-bit packetId][32-bit fromNode][32-bit block counter].
-func CreateNonce(packetID uint32, fromNode uint32) ([]byte, error) {
+func createNonce(packetID uint32, fromNode uint32) ([]byte, error) {
 	// Expand packetId to 64 bits
 	packetID64 := uint64(packetID)
 
@@ -54,7 +54,7 @@ func XOR(text []byte, key []byte, packetID, fromNode uint32) ([]byte, error) {
 	//if len(text) < aes.BlockSize {
 	//	return nil, fmt.Errorf("text too short")
 	//}
-	iv, err := CreateNonce(packetID, fromNode)
+	iv, err := createNonce(packetID, fromNode)
 	if err != nil {
 		return nil, err
 	}

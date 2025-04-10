@@ -2,7 +2,6 @@ package radio
 
 import (
 	"encoding/base64"
-	"errors"
 	"fmt"
 
 	"buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go/meshtastic"
@@ -17,22 +16,6 @@ const (
 	ComModeSerialDebug
 )
 
-// Transport defines methods required for communicating with a radio via serial, ble, or tcp
-// Probably need to reevaluate this to just use the ToRadio and FromRadio protobufs
-type Transport interface {
-	Connect() error
-	SendPacket(data []byte) error
-	RequestConfig() error
-
-	//	Listen(ch chan)
-	Close() error
-}
-
-// Something is something created to track keys for packet decrypting
-type Something struct {
-	keys map[string][]byte
-}
-
 // DefaultKey encryption key, commonly referenced as AQ==
 // as base64: 1PG7OiApB1nwvP+rz05pAQ==
 var DefaultKey = []byte{0xd4, 0xf1, 0xbb, 0x3a, 0x20, 0x29, 0x07, 0x59, 0xf0, 0xbc, 0xff, 0xab, 0xcf, 0x4e, 0x69, 0x01}
@@ -40,14 +23,6 @@ var DefaultKey = []byte{0xd4, 0xf1, 0xbb, 0x3a, 0x20, 0x29, 0x07, 0x59, 0xf0, 0x
 // ParseKey converts the most common representation of a channel encryption key (URL encoded base64) to a byte slice
 func ParseKey(key string) ([]byte, error) {
 	return base64.URLEncoding.DecodeString(key)
-}
-
-func NewThing() *Something {
-	return &Something{keys: map[string][]byte{
-		"LongFast":  DefaultKey,
-		"LongSlow":  DefaultKey,
-		"VLongSlow": DefaultKey,
-	}}
 }
 
 // GenerateByteSlices creates a bunch of weak keys for use when interfacing on MQTT.
@@ -83,8 +58,6 @@ func GenerateByteSlices() [][]byte {
 	return allSlices
 }
 
-var ErrDecrypt = errors.New("unable to decrypt payload")
-
 // xorHash computes a simple XOR hash of the provided byte slice.
 func xorHash(p []byte) uint8 {
 	var code uint8
@@ -108,6 +81,7 @@ func ChannelHash(channelName string, channelKey []byte) (uint32, error) {
 
 // TryDecode attempts to decrypt a packet with the specified key, or return the already decrypted data if present.
 func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, error) {
+
 	//packet := env.GetPacket()
 	switch packet.GetPayloadVariant().(type) {
 	case *meshtastic.MeshPacket_Decoded:
@@ -137,11 +111,6 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 		//fmt.Println("supplied key success")
 		return &meshPacket, nil
 	default:
-		return nil, errors.New("unknown payload variant")
+		return nil, ErrUnkownPayloadType
 	}
-}
-
-// TryDecode decode a payload to a Data protobuf
-func (s *Something) TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, error) {
-	return TryDecode(packet, key)
 }

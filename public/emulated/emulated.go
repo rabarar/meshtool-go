@@ -229,28 +229,11 @@ func (r *Radio) tryHandleMQTTMessage(msg mqtt.Message) error {
 
 	r.logger.Debug("received service envelope for primary channel", "serviceEnvelope", serviceEnvelope)
 	// Check if we should try and decrypt the message
-	var data *meshtastic.Data
-	switch payload := meshPacket.PayloadVariant.(type) {
-	case *meshtastic.MeshPacket_Decoded:
-		data = payload.Decoded
-	case *meshtastic.MeshPacket_Encrypted:
-		// TODO: Check if we have the key for this channel
-		plaintext, err := radio.XOR(
-			payload.Encrypted,
-			primaryPSK,
-			meshPacket.Id,
-			meshPacket.From,
-		)
-		if err != nil {
-			return fmt.Errorf("decrypting: %w", err)
-		}
-		data = &meshtastic.Data{}
-		if err := proto.Unmarshal(plaintext, data); err != nil {
-			return fmt.Errorf("unmarshalling decrypted data: %w", err)
-		}
-	default:
-		return fmt.Errorf("unknown payload variant %T", payload)
+	data, err := radio.TryDecode(meshPacket, primaryPSK)
+	if err != nil {
+		return fmt.Errorf("decoding: %w", err)
 	}
+
 	r.logger.Debug("received data for primary channel", "data", data)
 
 	// For messages on the primary channel, we want to handle these and potentially update the nodeDB.
@@ -325,6 +308,7 @@ func (r *Radio) sendPacket(ctx context.Context, packet *meshtastic.MeshPacket) e
 	if err != nil {
 		return fmt.Errorf("marshalling service envelope: %w", err)
 	}
+	// TODO: optional encryption
 	return r.mqtt.Publish(&mqtt.Message{
 		Topic:   r.mqtt.GetFullTopicForChannel(r.cfg.Channels.Settings[0].Name) + "/" + r.cfg.NodeID.String(),
 		Payload: bytes,
