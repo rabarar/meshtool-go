@@ -1,0 +1,6 @@
+/.direnv
+.vscode/
+.idea/
+go.work*
+coverage.out
+coverage.html

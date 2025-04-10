@@ -1,0 +1,95 @@
+package main
+
+import (
+	"encoding/base64"
+	"encoding/hex"
+	"strings"
+
+	"buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go/meshtastic"
+	"github.com/charmbracelet/log"
+	"github.com/kmpm/meshtool/public/mqtt"
+	"github.com/kmpm/meshtool/public/radio"
+	"google.golang.org/protobuf/proto"
+)
+
+func main() {
+	client := mqtt.NewClient("tcp://mqtt.meshat.se:1883", "msh", "msh", "msh/+")
+	err := client.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+	client.Handle("LongFast", channelHandler("LongFast"))
+	log.Info("Started")
+	select {}
+}
+
+func channelHandler(channel string) mqtt.HandlerFunc {
+	return func(m mqtt.Message) {
+		var env meshtastic.ServiceEnvelope
+		err := proto.Unmarshal(m.Payload, &env)
+		if err != nil {
+			log.Fatal("failed unmarshalling to service envelope", "err", err, "payload", hex.EncodeToString(m.Payload))
+			return
+		}
+
+		key, err := generateKey("1PG7OiApB1nwvP+rz05pAQ==")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		decodedMessage, err := radio.XOR(env.Packet.GetEncrypted(), key, env.Packet.Id, env.Packet.From)
+		if err != nil {
+			log.Error(err)
+		}
+		var message meshtastic.Data
+		err = proto.Unmarshal(decodedMessage, &message)
+		if err != nil {
+			log.Error(err)
+		}
+
+		log.Info(processMessage(&message), "topic", m.Topic, "channel", channel, "portnum", message.Portnum.String())
+	}
+}
+
+func processMessage(message *meshtastic.Data) string {
+	if message.Portnum == meshtastic.PortNum_NODEINFO_APP {
+		var user = meshtastic.User{}
+		proto.Unmarshal(message.Payload, &user)
+		return user.String()
+	}
+	if message.Portnum == meshtastic.PortNum_POSITION_APP {
+		var pos = meshtastic.Position{}
+		proto.Unmarshal(message.Payload, &pos)
+		return pos.String()
+	}
+	if message.Portnum == meshtastic.PortNum_TELEMETRY_APP {
+		var t = meshtastic.Telemetry{}
+		proto.Unmarshal(message.Payload, &t)
+		return t.String()
+	}
+	if message.Portnum == meshtastic.PortNum_NEIGHBORINFO_APP {
+		var n = meshtastic.NeighborInfo{}
+		proto.Unmarshal(message.Payload, &n)
+		return n.String()
+	}
+	if message.Portnum == meshtastic.PortNum_STORE_FORWARD_APP {
+		var s = meshtastic.StoreAndForward{}
+		proto.Unmarshal(message.Payload, &s)
+		return s.String()
+	}
+
+	return "unknown message type"
+}
+
+func generateKey(key string) ([]byte, error) {
+	// Pad the key with '=' characters to ensure it's a valid base64 string
+	padding := (4 - len(key)%4) % 4
+	paddedKey := key + strings.Repeat("=", padding)
+
+	// Replace '-' with '+' and '_' with '/'
+	replacedKey := strings.ReplaceAll(paddedKey, "-", "+")
+	replacedKey = strings.ReplaceAll(replacedKey, "_", "/")
+
+	// Decode the base64-encoded key
+	return base64.StdEncoding.DecodeString(replacedKey)
+}
