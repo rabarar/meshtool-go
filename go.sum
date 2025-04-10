@@ -1,5 +1,3 @@
-buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go v1.36.6-20241003115213-cb52797f3fc0.1 h1:hNb8wBa6inOzHxxoY343DTWPissklbI53w7Xx4mamNc=
-buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go v1.36.6-20241003115213-cb52797f3fc0.1/go.mod h1:Pb99t5VcAbgWOAT8d5toGlg6s1YcrNxVv3R3MIphhxI=
 buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go v1.36.6-20241006120827-cc36fd21e859.1 h1:Ag4IzW2iiMayjuSOHoOqXFBzQkvDTPI2Kn49Gpfzufc=
 buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go v1.36.6-20241006120827-cc36fd21e859.1/go.mod h1:Pb99t5VcAbgWOAT8d5toGlg6s1YcrNxVv3R3MIphhxI=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=

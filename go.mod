@@ -1,4 +1,4 @@
-module github.com/kmpm/meshtool
+module github.com/kmpm/meshtool-go
 
 go 1.24
 

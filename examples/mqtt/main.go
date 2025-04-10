@@ -8,8 +8,8 @@ import (
 
 	"buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go/meshtastic"
 	"github.com/charmbracelet/log"
-	"github.com/kmpm/meshtool/public/mqtt"
-	"github.com/kmpm/meshtool/public/radio"
+	"github.com/kmpm/meshtool-go/public/mqtt"
+	"github.com/kmpm/meshtool-go/public/radio"
 	"google.golang.org/protobuf/proto"
 )
 
