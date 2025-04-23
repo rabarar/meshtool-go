@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rabarar/meshtool-go/github.com/meshtastic/go/meshtastic"
+	"github.com/rabarar/meshtastic"
 	"github.com/rabarar/meshtool-go/public/meshtool"
 
 	"github.com/charmbracelet/log"

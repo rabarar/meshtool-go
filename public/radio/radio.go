@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/rabarar/meshtool-go/github.com/meshtastic/go/meshtastic"
+	"github.com/rabarar/meshtastic"
 
 	"google.golang.org/protobuf/proto"
 )

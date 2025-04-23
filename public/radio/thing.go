@@ -1,7 +1,7 @@
 package radio
 
 import (
-	"github.com/rabarar/meshtool-go/github.com/meshtastic/go/meshtastic"
+	"github.com/rabarar/meshtastic"
 )
 
 // Something is something created to track keys for packet decrypting

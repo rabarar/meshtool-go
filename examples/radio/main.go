@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
-	"github.com/rabarar/meshtool-go/github.com/meshtastic/go/meshtastic"
+	"github.com/rabarar/meshtastic"
 	"github.com/rabarar/meshtool-go/public/transport"
 	"github.com/rabarar/meshtool-go/public/transport/serial"
 	"google.golang.org/protobuf/proto"
