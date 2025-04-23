@@ -7,10 +7,10 @@ import (
 	"flag"
 	"strings"
 
-	"buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go/meshtastic"
 	"github.com/charmbracelet/log"
-	"github.com/kmpm/meshtool-go/public/mqtt"
-	"github.com/kmpm/meshtool-go/public/radio"
+	"github.com/meshtastic/go/meshtastic"
+	"github.com/rabarar/meshtool-go/public/mqtt"
+	"github.com/rabarar/meshtool-go/public/radio"
 	"google.golang.org/protobuf/proto"
 )
 

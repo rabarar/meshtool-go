@@ -8,12 +8,12 @@ import (
 	"sync"
 	"time"
 
-	"buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go/meshtastic"
 	"github.com/charmbracelet/log"
-	"github.com/kmpm/meshtool-go/public/meshtool"
-	"github.com/kmpm/meshtool-go/public/mqtt"
-	"github.com/kmpm/meshtool-go/public/radio"
-	"github.com/kmpm/meshtool-go/public/transport"
+	"github.com/meshtastic/go/meshtastic"
+	"github.com/rabarar/meshtool-go/public/meshtool"
+	"github.com/rabarar/meshtool-go/public/mqtt"
+	"github.com/rabarar/meshtool-go/public/radio"
+	"github.com/rabarar/meshtool-go/public/transport"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/proto"
 )

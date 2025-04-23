@@ -8,7 +8,7 @@ import (
 	"math/rand"
 	"sync"
 
-	"buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go/meshtastic"
+	"github.com/meshtastic/go/meshtastic"
 	"google.golang.org/protobuf/proto"
 )
 

@@ -6,10 +6,10 @@ import (
 	"os/signal"
 	"time"
 
-	"buf.build/gen/go/meshtastic/protobufs/protocolbuffers/go/meshtastic"
 	"github.com/charmbracelet/log"
-	"github.com/kmpm/meshtool-go/public/transport"
-	"github.com/kmpm/meshtool-go/public/transport/serial"
+	"github.com/meshtastic/go/meshtastic"
+	"github.com/rabarar/meshtool-go/public/transport"
+	"github.com/rabarar/meshtool-go/public/transport/serial"
 	"google.golang.org/protobuf/proto"
 )
 
