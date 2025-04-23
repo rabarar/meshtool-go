@@ -1,3 +1,3 @@
-module github.com/raba/meshtool-go
+module github.com/rabarar/meshtool-go
 
 go 1.24.2

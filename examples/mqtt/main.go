@@ -7,8 +7,9 @@ import (
 	"flag"
 	"strings"
 
+	"meshtool-go/github.com/meshtastic/go/meshtastic"
+
 	"github.com/charmbracelet/log"
-	"github.com/meshtastic/go/meshtastic"
 	"github.com/rabarar/meshtool-go/public/mqtt"
 	"github.com/rabarar/meshtool-go/public/radio"
 	"google.golang.org/protobuf/proto"
