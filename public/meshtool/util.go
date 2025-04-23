@@ -1,7 +1,7 @@
 package meshtool
 
 import (
-	"github.com/meshtastic/go/meshtastic"
+	"meshtool-go/github.com/meshtastic/go/meshtastic"
 )
 
 type Node struct {
