@@ -1,6 +1,8 @@
 package mqtt
 
-import "meshtool-go/github.com/meshtastic/go/meshtastic"
+import (
+	"github.com/rabarar/meshtool-go/github.com/meshtastic/go/meshtastic"
+)
 
 // Node implements a meshtastic node that connects only via MQTT
 type Node struct {

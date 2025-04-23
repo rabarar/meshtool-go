@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"meshtool-go/github.com/meshtastic/go/meshtastic"
-
 	"github.com/charmbracelet/log"
+	"github.com/rabarar/meshtool-go/github.com/meshtastic/go/meshtastic"
 	"github.com/rabarar/meshtool-go/public/emulated"
 	"github.com/rabarar/meshtool-go/public/meshtool"
 	"github.com/rabarar/meshtool-go/public/mqtt"

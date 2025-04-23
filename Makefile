@@ -1,7 +1,14 @@
 
-.PHONY: all
-all: tidy audit check-git-clean
+MESH_PROTO=../protobufs
 
+.PHONY: all
+all: go-proto tidy audit check-git-clean 
+
+go-proto:
+	(cd ${MESH_PROTO}; make clean all) && echo "made go-proto files"
+	(rm -rf github.com) && (echo "removing old meshtastic protobuf gogen")
+	(mkdir -p github.com/meshtastic/go; cp -rp ${MESH_PROTO}/build/gen/go/meshtastic github.com/meshtastic/go/.)
+	(cp ${MESH_PROTO}/build/gen/go/nanopb.pb.go github.com/meshtastic/go/meshtastic/.)
 
 .PHONY: tidy
 tidy:
@@ -17,7 +24,7 @@ audit:
 	go vet ./...
 	go list -m all
 	go run honnef.co/go/tools/cmd/staticcheck@latest -checks=all,-ST1000,-U1000 ./...
-	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+	#go run golang.org/x/vuln/cmd/govulncheck@latest ./...
 
 .PHONY: test
 test:

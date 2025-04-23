@@ -5,8 +5,7 @@ import (
 	"net"
 	"testing"
 
-	"meshtool-go/github.com/meshtastic/go/meshtastic"
-
+	"github.com/rabarar/meshtool-go/github.com/meshtastic/go/meshtastic"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/proto"

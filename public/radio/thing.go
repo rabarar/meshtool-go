@@ -1,6 +1,8 @@
 package radio
 
-import "meshtool-go/github.com/meshtastic/go/meshtastic"
+import (
+	"github.com/rabarar/meshtool-go/github.com/meshtastic/go/meshtastic"
+)
 
 // Something is something created to track keys for packet decrypting
 type Something struct {
