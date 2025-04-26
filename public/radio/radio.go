@@ -96,16 +96,15 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 		}
 		log.Warnf("PLAINTEXT: [%s]", hex.EncodeToString(decrypted))
 
-		/*
-			var meshPacket meshtastic.Data
-			err = proto.Unmarshal(decrypted, &meshPacket)
-			if err != nil {
-				log.Warnf("Failed with supplied key: %s", err)
-				return nil, ErrDecrypt
-			}
-			return &meshPacket, nil
-		*/
+		var meshPacket meshtastic.Data
+		err = proto.Unmarshal(decrypted, &meshPacket)
+		if err != nil {
+			log.Warnf("Failed with supplied key: %s", err)
+			return nil, ErrDecrypt
+		}
+		return &meshPacket, nil
 
+		/* TODO TODO TODO
 		var fromRadio meshtastic.FromRadio
 		proto.Unmarshal(decrypted, &fromRadio)
 		packet := fromRadio.GetPacket()
@@ -127,6 +126,7 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 		}
 
 		return &dataPacket, nil
+		*/
 	default:
 		return nil, ErrUnkownPayloadType
 	}
