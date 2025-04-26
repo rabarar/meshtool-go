@@ -99,14 +99,15 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 		*/
 		decrypted, err := XOR(packet.GetEncrypted(), key, packet.Id, packet.From)
 		if err != nil {
-			log.Warnf("failed decrypting packet: %s", err)
+			log.Warnf("Failed decrypting packet: %s", err)
 			return nil, ErrDecrypt
 		}
+		log.Warnf("decrypted packet: [%s]", decrypted)
 
 		var meshPacket meshtastic.Data
 		err = proto.Unmarshal(decrypted, &meshPacket)
 		if err != nil {
-			log.Warnf("failed with supplied key: %s", err)
+			log.Warnf("Failed with supplied key: %s", err)
 			return nil, ErrDecrypt
 		}
 		return &meshPacket, nil
