@@ -110,7 +110,6 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 			log.Info("failed with supplied key")
 			return nil, ErrDecrypt
 		}
-		//fmt.Println("supplied key success")
 		return &meshPacket, nil
 	default:
 		return nil, ErrUnkownPayloadType
