@@ -96,37 +96,43 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 		}
 		log.Warnf("PLAINTEXT: [%s]", hex.EncodeToString(decrypted))
 
-		var meshPacket meshtastic.Data
-		err = proto.Unmarshal(decrypted, &meshPacket)
-		if err != nil {
-			log.Warnf("Failed with supplied key: %s", err)
-			return nil, ErrDecrypt
+		useOriginal := false
+		if useOriginal {
+			var meshPacket meshtastic.Data
+			err = proto.Unmarshal(decrypted, &meshPacket)
+			if err != nil {
+				log.Warnf("Failed with supplied key: %s", err)
+				return nil, ErrDecrypt
+			}
+			return &meshPacket, nil
+		} else {
+
+			var fromRadio meshtastic.FromRadio
+			proto.Unmarshal(decrypted, &fromRadio)
+			packet := fromRadio.GetPacket()
+			decoded := packet.GetDecoded()
+			if decoded == nil {
+				log.Warnf("failed to retrieve Decoded Packget")
+				return nil, ErrDecrypt
+			}
+
+			var dataPacket meshtastic.Data
+			proto.Unmarshal(decoded.Payload, &dataPacket)
+
+			switch dataPacket.Portnum {
+			case meshtastic.PortNum_TEXT_MESSAGE_APP:
+				txt := dataPacket.Payload
+				fmt.Println("Got Text:", string(txt))
+			case meshtastic.PortNum_TELEMETRY_APP:
+				var telemetry meshtastic.Telemetry
+				proto.Unmarshal(dataPacket.Payload, &telemetry)
+				fmt.Printf("Got Telemetry:")
+			default:
+				fmt.Println("Unknown portnum:", dataPacket.Portnum)
+			}
+
+			return &dataPacket, nil
 		}
-		return &meshPacket, nil
-
-		/* TODO TODO TODO
-		var fromRadio meshtastic.FromRadio
-		proto.Unmarshal(decrypted, &fromRadio)
-		packet := fromRadio.GetPacket()
-		decoded := packet.GetDecoded()
-
-		var dataPacket meshtastic.Data
-		proto.Unmarshal(decoded.Payload, &dataPacket)
-
-		switch dataPacket.Portnum {
-		case meshtastic.PortNum_TEXT_MESSAGE_APP:
-			txt := dataPacket.Payload
-			fmt.Println("Got Text:", string(txt))
-		case meshtastic.PortNum_TELEMETRY_APP:
-			var telemetry meshtastic.Telemetry
-			proto.Unmarshal(dataPacket.Payload, &telemetry)
-			fmt.Printf("Got Telemetry:")
-		default:
-			fmt.Println("Unknown portnum:", dataPacket.Portnum)
-		}
-
-		return &dataPacket, nil
-		*/
 	default:
 		return nil, ErrUnkownPayloadType
 	}
