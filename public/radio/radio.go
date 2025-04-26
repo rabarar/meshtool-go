@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/charmbracelet/log"
 	"github.com/rabarar/meshtastic"
 
 	"google.golang.org/protobuf/proto"
@@ -100,14 +99,14 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 		*/
 		decrypted, err := XOR(packet.GetEncrypted(), key, packet.Id, packet.From)
 		if err != nil {
-			log.Error("failed decrypting packet", "error", err)
+			fmt.Printf("failed decrypting packet", "error", err)
 			return nil, ErrDecrypt
 		}
 
 		var meshPacket meshtastic.Data
 		err = proto.Unmarshal(decrypted, &meshPacket)
 		if err != nil {
-			log.Info("failed with supplied key")
+			fmt.Printf("failed with supplied key")
 			return nil, ErrDecrypt
 		}
 		return &meshPacket, nil
