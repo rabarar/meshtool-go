@@ -89,7 +89,6 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 		//fmt.Println("decoded")
 		return packet.GetDecoded(), nil
 	case *meshtastic.MeshPacket_Encrypted:
-		//	fmt.Println("encrypted")
 		/*
 			key, exists := s.keys[env.ChannelId]
 			if !exists {
@@ -99,7 +98,7 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 		*/
 		decrypted, err := XOR(packet.GetEncrypted(), key, packet.Id, packet.From)
 		if err != nil {
-			fmt.Printf("failed decrypting packet", "error", err)
+			fmt.Printf("failed decrypting packet: %s", err)
 			return nil, ErrDecrypt
 		}
 
