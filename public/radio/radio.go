@@ -96,7 +96,7 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 		}
 		log.Warnf("PLAINTEXT: [%s]", hex.EncodeToString(decrypted))
 
-		useOriginal := false
+		useOriginal := true
 		if useOriginal {
 			var meshPacket meshtastic.Data
 			err = proto.Unmarshal(decrypted, &meshPacket)
@@ -107,21 +107,12 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 			return &meshPacket, nil
 		} else {
 
-			var fromRadio meshtastic.FromRadio
-			err = proto.Unmarshal(decrypted, &fromRadio)
-			if err != nil {
-				log.Warnf("Failed to unmarshal FromRadio protobuf: %s", err)
-				return nil, ErrDecrypt
-			}
-			packet := fromRadio.GetPacket()
-			decoded := packet.GetDecoded()
-			if decoded == nil {
-				log.Warnf("failed to retrieve Decoded Packet")
-				return nil, ErrDecrypt
-			}
-
 			var dataPacket meshtastic.Data
-			proto.Unmarshal(decoded.Payload, &dataPacket)
+			err = proto.Unmarshal(decrypted, &dataPacket)
+			if err != nil {
+				log.Warnf("Failed to unmarshal Meshtastic Data packet: %s", err)
+				return nil, ErrDecrypt
+			}
 
 			switch dataPacket.Portnum {
 			case meshtastic.PortNum_TEXT_MESSAGE_APP:
