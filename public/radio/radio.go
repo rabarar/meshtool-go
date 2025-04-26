@@ -101,18 +101,22 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 			var meshPacket meshtastic.Data
 			err = proto.Unmarshal(decrypted, &meshPacket)
 			if err != nil {
-				log.Warnf("Failed with supplied key: %s", err)
+				log.Warnf("Failed to unmarshal Meshtastic Data packet: %s", err)
 				return nil, ErrDecrypt
 			}
 			return &meshPacket, nil
 		} else {
 
 			var fromRadio meshtastic.FromRadio
-			proto.Unmarshal(decrypted, &fromRadio)
+			err = proto.Unmarshal(decrypted, &fromRadio)
+			if err != nil {
+				log.Warnf("Failed to unmarshal FromRadio protobuf: %s", err)
+				return nil, ErrDecrypt
+			}
 			packet := fromRadio.GetPacket()
 			decoded := packet.GetDecoded()
 			if decoded == nil {
-				log.Warnf("failed to retrieve Decoded Packget")
+				log.Warnf("failed to retrieve Decoded Packet")
 				return nil, ErrDecrypt
 			}
 
