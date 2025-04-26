@@ -2,6 +2,7 @@ package radio
 
 import (
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 
 	"github.com/charmbracelet/log"
@@ -102,7 +103,7 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 			log.Warnf("Failed decrypting packet: %s", err)
 			return nil, ErrDecrypt
 		}
-		log.Warnf("decrypted packet: [%x]", decrypted)
+		log.Warnf("PLAINTEXT: [%s]", hex.EncodeToString(decrypted))
 
 		var meshPacket meshtastic.Data
 		err = proto.Unmarshal(decrypted, &meshPacket)
