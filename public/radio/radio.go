@@ -7,7 +7,6 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/rabarar/meshtastic"
-
 	"google.golang.org/protobuf/proto"
 )
 
@@ -85,19 +84,11 @@ func ChannelHash(channelName string, channelKey []byte) (uint32, error) {
 // TryDecode attempts to decrypt a packet with the specified key, or return the already decrypted data if present.
 func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, error) {
 
-	//packet := env.GetPacket()
 	switch packet.GetPayloadVariant().(type) {
 	case *meshtastic.MeshPacket_Decoded:
 		//fmt.Println("decoded")
 		return packet.GetDecoded(), nil
 	case *meshtastic.MeshPacket_Encrypted:
-		/*
-			key, exists := s.keys[env.ChannelId]
-			if !exists {
-				return nil, errors.New("no decryption key for channel")
-			}
-
-		*/
 		decrypted, err := XOR(packet.GetEncrypted(), key, packet.Id, packet.From)
 		if err != nil {
 			log.Warnf("Failed decrypting packet: %s", err)
@@ -105,13 +96,37 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 		}
 		log.Warnf("PLAINTEXT: [%s]", hex.EncodeToString(decrypted))
 
-		var meshPacket meshtastic.Data
-		err = proto.Unmarshal(decrypted, &meshPacket)
-		if err != nil {
-			log.Warnf("Failed with supplied key: %s", err)
-			return nil, ErrDecrypt
+		/*
+			var meshPacket meshtastic.Data
+			err = proto.Unmarshal(decrypted, &meshPacket)
+			if err != nil {
+				log.Warnf("Failed with supplied key: %s", err)
+				return nil, ErrDecrypt
+			}
+			return &meshPacket, nil
+		*/
+
+		var fromRadio meshtastic.FromRadio
+		proto.Unmarshal(decrypted, &fromRadio)
+		packet := fromRadio.GetPacket()
+		decoded := packet.GetDecoded()
+
+		var dataPacket meshtastic.Data
+		proto.Unmarshal(decoded.Payload, &dataPacket)
+
+		switch dataPacket.Portnum {
+		case meshtastic.PortNum_TEXT_MESSAGE_APP:
+			txt := dataPacket.Payload
+			fmt.Println("Got Text:", string(txt))
+		case meshtastic.PortNum_TELEMETRY_APP:
+			var telemetry meshtastic.Telemetry
+			proto.Unmarshal(dataPacket.Payload, &telemetry)
+			fmt.Printf("Got Telemetry:")
+		default:
+			fmt.Println("Unknown portnum:", dataPacket.Portnum)
 		}
-		return &meshPacket, nil
+
+		return &dataPacket, nil
 	default:
 		return nil, ErrUnkownPayloadType
 	}
