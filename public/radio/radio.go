@@ -102,7 +102,7 @@ func TryDecode(packet *meshtastic.MeshPacket, key []byte) (*meshtastic.Data, err
 			log.Warnf("Failed decrypting packet: %s", err)
 			return nil, ErrDecrypt
 		}
-		log.Warnf("decrypted packet: [%s]", decrypted)
+		log.Warnf("decrypted packet: [%s]", string(decrypted))
 
 		var meshPacket meshtastic.Data
 		err = proto.Unmarshal(decrypted, &meshPacket)
