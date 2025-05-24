@@ -5,7 +5,7 @@ go 1.24.2
 require (
 	github.com/charmbracelet/log v0.4.1
 	github.com/eclipse/paho.mqtt.golang v1.5.0
-	github.com/rabarar/meshtastic v0.1.0
+	github.com/rabarar/meshtastic v1.0.2
 	github.com/stretchr/testify v1.10.0
 	go.bug.st/serial v1.6.4
 	golang.org/x/sync v0.13.0

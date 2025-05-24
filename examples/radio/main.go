@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"time"
@@ -44,7 +45,7 @@ func main() {
 	client.Handle(new(meshtastic.MeshPacket), func(msg proto.Message) {
 		pkt := msg.(*meshtastic.MeshPacket)
 		data := pkt.GetDecoded()
-		log.Info("Received message from radio", "msg", processMessage(data), "from", pkt.From, "portnum", data.Portnum.String())
+		log.Info("Received message from radio", "msg", processMessage(data), "from", fmt.Sprintf("%x", pkt.From), "portnum", data.Portnum.String())
 	})
 	ctxTimeout, cancelTimeout := context.WithTimeout(ctx, 10*time.Second)
 	defer cancelTimeout()
@@ -76,6 +77,10 @@ func processMessage(message *meshtastic.Data) string {
 		var n = meshtastic.NeighborInfo{}
 		proto.Unmarshal(message.Payload, &n)
 		return n.String()
+	}
+	if message.Portnum == meshtastic.PortNum_TEXT_MESSAGE_APP {
+		return string(message.Payload)
+
 	}
 	if message.Portnum == meshtastic.PortNum_STORE_FORWARD_APP {
 		var s = meshtastic.StoreAndForward{}
